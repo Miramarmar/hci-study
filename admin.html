@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #1a1a2e;
+    --muted:  #6b7a8d;
+    --border: #dde3ed;
+    --bg:     #f4f6fa;
+    --white:  #ffffff;
+    --blue:   #3d5a80;
+    --green:  #2d8653;
+    --red:    #c0392b;
+    --radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--ink);
+    color: white;
+    padding: 1.1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .topbar h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+
+  .topbar p { font-size: .8rem; opacity: .55; margin-top: .1rem; }
+
+  .topbar-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: .3rem .8rem;
+    border-radius: 20px;
+    font-size: .75rem;
+  }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .stat-card .label {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .stat-card .number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-top: .25rem;
+  }
+
+  .stat-card.ctrl .number { color: var(--blue); }
+  .stat-card.test .number { color: var(--green); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .card h2 .badge {
+    font-size: .7rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: .15rem .5rem;
+    border-radius: 20px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── FORM CONTROLS ── */
+  .form-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+
+  .field { display: flex; flex-direction: column; gap: .35rem; }
+
+  .field label {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+
+  .field input {
+    padding: .65rem .9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: .9rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    width: 180px;
+  }
+
+  .field input:focus { outline: none; border-color: var(--blue); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: .65rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-size: .88rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .btn-primary { background: var(--ink); color: white; }
+  .btn-primary:hover { background: #2a2a45; }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { filter: brightness(1.1); }
+
+  .btn-blue { background: var(--blue); color: white; }
+  .btn-blue:hover { filter: brightness(1.1); }
+
+  /* ── TABLE ── */
+  .tbl-wrap {
+    max-height: 340px;
+    overflow-y: auto;
+    margin-top: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+
+  thead th {
+    background: var(--bg);
+    padding: .6rem .9rem;
+    text-align: left;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    font-weight: 600;
+    position: sticky; top: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody td {
+    padding: .65rem .9rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f8faff; }
+
+  .pill {
+    display: inline-block;
+    padding: .2rem .65rem;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .pill.control { background: #e8f0fe; color: var(--blue); }
+  .pill.test    { background: #e6f4ec; color: var(--green); }
+
+  /* ── SEARCH RESULT ── */
+  #searchResult {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    background: var(--bg);
+    border-radius: 8px;
+    display: none;
+    font-size: .9rem;
+  }
+
+  #searchResult p { margin: .3rem 0; }
+  #searchResult strong { color: var(--blue); }
+
+  /* ── ALERT ── */
+  .alert {
+    padding: .7rem 1rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    margin-top: .75rem;
+  }
+  .alert-green { background: #e6f4ec; color: #1a5c35; border-left: 3px solid var(--green); }
+  .alert-red   { background: #fef0ef; color: #7b1d1d; border-left: 3px solid var(--red); }
+
+  /* ── EXPORT BUTTONS ── */
+  .export-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  @media (max-width:700px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .form-row  { flex-direction: column; }
+    .field input { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>🔬 Research Admin Dashboard</h1>
+    <p>HCI AI Learning Study — Supabase Backend</p>
+  </div>
+  <span class="topbar-badge" id="liveStatus">Connecting…</span>
+</div>
+
+<div class="page">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="label">Total Students</div>
+      <div class="number" id="statTotal">—</div>
+    </div>
+    <div class="stat-card ctrl">
+      <div class="label">Control Group</div>
+      <div class="number" id="statCtrl">—</div>
+    </div>
+    <div class="stat-card test">
+      <div class="label">Test Group</div>
+      <div class="number" id="statTest">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Conversations</div>
+      <div class="number" id="statConv">—</div>
+    </div>
+  </div>
+
+  <!-- GENERATE IDs -->
+  <div class="card">
+    <h2>📋 Generate Student IDs <span class="badge">Step 1 — do this before study day</span></h2>
+
+    <div class="form-row">
+      <div class="field">
+        <label>Study Prefix</label>
+        <input id="prefix" value="HCI2026" maxlength="10">
+      </div>
+      <div class="field">
+        <label>Number of students</label>
+        <input id="numStudents" type="number" value="20" min="2" max="200">
+      </div>
+      <button class="btn btn-primary" id="genBtn">Generate IDs</button>
+    </div>
+
+    <div id="genAlert"></div>
+
+    <div class="tbl-wrap" id="idTableWrap" style="display:none;">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student ID</th>
+            <th>Group</th>
+            <th>Student URL</th>
+          </tr>
+        </thead>
+        <tbody id="idTableBody"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:1rem; display:flex; gap:.75rem;" id="downloadRow" style="display:none!important">
+      <button class="btn btn-green" id="dlCSV" style="display:none">⬇ Download CSV</button>
+    </div>
+  </div>
+
+  <!-- EXPORT DATA -->
+  <div class="card">
+    <h2>💬 Export Conversation Data <span class="badge">After the study</span></h2>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem;">
+      Download all student conversations for your analysis. Export as JSON for Python/R analysis.
+    </p>
+    <div class="export-row">
+      <button class="btn btn-blue" id="expJSON">⬇ Export JSON (full data)</button>
+      <button class="btn btn-outline" id="expCSV">⬇ Export CSV (summary)</button>
+      <button class="btn btn-outline" id="refreshBtn">↻ Refresh Stats</button>
+    </div>
+    <div id="expAlert"></div>
+  </div>
+
+  <!-- SEARCH STUDENT -->
+  <div class="card">
+    <h2>🔍 Look Up Student</h2>
+    <div class="form-row">
+      <div class="field" style="flex:1; max-width:300px;">
+        <label>Student ID</label>
+        <input id="searchId" placeholder="HCI2026_001" style="width:100%">
+      </div>
+      <button class="btn btn-outline" id="searchBtn">Search</button>
+    </div>
+    <div id="searchResult"></div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ─────────────────────────────────────────────
+//  🔑  PASTE YOUR SUPABASE KEYS HERE
+// ─────────────────────────────────────────────
+const SUPABASE_URL  = 'https://xvaokacldkgofkoldpdu.supabase.co';  // ← replace
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2YW9rYWNsZGtnb2Zrb2xkcGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjU3NjQsImV4cCI6MjA4NjkwMTc2NH0.dfGr0I7-nmRPq0t2ZV2a9xJ2yi5h6nhDffT-0nsM_-8';              // ← replace
+// ─────────────────────────────────────────────
+
+// ── Supabase REST helpers ─────────────────────
+const hdrs = {
+  apikey: SUPABASE_ANON,
+  Authorization: `Bearer ${SUPABASE_ANON}`,
+  'Content-Type': 'application/json',
+  Prefer: 'return=representation'
+};
+
+async function get(table, qs='') {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${qs}`, { headers: hdrs });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function insert(table, data) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST', headers: hdrs, body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// ── Hosting base URL (for student links) ─────
+const BASE = window.location.origin + window.location.pathname.replace('admin.html','');
+
+// ── Stats ─────────────────────────────────────
+async function refreshStats() {
+  try {
+    const [students, convs] = await Promise.all([
+      get('students', 'select=study_group'),
+      get('conversations', 'select=id')
+    ]);
+
+    const ctrl = students.filter(s=>s.study_group==='control').length;
+    const test = students.filter(s=>s.study_group==='test').length;
+
+    document.getElementById('statTotal').textContent = students.length;
+    document.getElementById('statCtrl').textContent  = ctrl;
+    document.getElementById('statTest').textContent  = test;
+    document.getElementById('statConv').textContent  = convs.length;
+    document.getElementById('liveStatus').textContent = '🟢 Connected';
+  } catch(e) {
+    document.getElementById('liveStatus').textContent = '🔴 Error';
+    console.error(e);
+  }
+}
+
+refreshStats();
+setInterval(refreshStats, 15000);
+
+// ── Generate IDs ──────────────────────────────
+let generated = [];
+
+document.getElementById('genBtn').addEventListener('click', async () => {
+  const prefix = document.getElementById('prefix').value.trim().toUpperCase();
+  const n      = parseInt(document.getElementById('numStudents').value);
+  const alertEl = document.getElementById('genAlert');
+
+  if (!prefix) { alertEl.innerHTML='<div class="alert alert-red">Please enter a prefix.</div>'; return; }
+  if (n<2||n>200) { alertEl.innerHTML='<div class="alert alert-red">Students must be between 2 and 200.</div>'; return; }
+
+  document.getElementById('genBtn').textContent = 'Generating…';
+  document.getElementById('genBtn').disabled = true;
+  alertEl.innerHTML = '';
+  generated = [];
+
+  // Shuffle indices for random group assignment
+  const indices = Array.from({length:n},(_,i)=>i+1);
+  // Randomly shuffle
+  for (let i=indices.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [indices[i],indices[j]]=[indices[j],indices[i]];
+  }
+  const halfN = Math.floor(n/2);
+
+  try {
+    const batch = indices.map((num, i) => ({
+      student_id:  `${prefix}_${String(num).padStart(3,'0')}`,
+      study_group: i < halfN ? 'control' : 'test'
+    }));
+
+    // Sort batch by student_id for display
+    batch.sort((a,b)=>a.student_id.localeCompare(b.student_id));
+
+    const rows = await insert('students', batch);
+    generated = batch;
+
+    // Build table
+    const tbody = document.getElementById('idTableBody');
+    tbody.innerHTML = '';
+    generated.forEach((s,i) => {
+      const url = `${BASE}student.html?id=${s.student_id}`;
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td><strong>${s.student_id}</strong></td>
+          <td><span class="pill ${s.study_group}">${s.study_group}</span></td>
+          <td style="font-size:.78rem;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <a href="${url}" target="_blank" style="color:var(--blue);text-decoration:none;">${url}</a>
+          </td>
+        </tr>`;
+    });
+
+    document.getElementById('idTableWrap').style.display='block';
+    document.getElementById('dlCSV').style.display='inline-block';
+    alertEl.innerHTML=`<div class="alert alert-green">✅ ${n} student IDs created (${halfN} control, ${n-halfN} test)</div>`;
+    await refreshStats();
+
+  } catch(e) {
+    alertEl.innerHTML=`<div class="alert alert-red">❌ Error: ${e.message}</div>`;
+  }
+
+  document.getElementById('genBtn').textContent='Generate IDs';
+  document.getElementById('genBtn').disabled=false;
+});
+
+// ── Download CSV ──────────────────────────────
+document.getElementById('dlCSV').addEventListener('click', () => {
+  if (!generated.length) return;
+  let csv='Student ID,Group,Student URL\n';
+  generated.forEach(s => {
+    csv += `${s.student_id},${s.study_group},${BASE}student.html?id=${s.student_id}\n`;
+  });
+  dl('student_ids.csv', csv, 'text/csv');
+});
+
+// ── Export JSON ───────────────────────────────
+document.getElementById('expJSON').addEventListener('click', async () => {
+  const alertEl = document.getElementById('expAlert');
+  alertEl.innerHTML = '<div class="alert alert-green">Exporting…</div>';
+  try {
+    const convs = await get('conversations', 'select=*&order=started_at.asc');
+    dl(
+      `conversations_${today()}.json`,
+      JSON.stringify(convs, null, 2),
+      'application/json'
+    );
+    alertEl.innerHTML = `<div class="alert alert-green">✅ Exported ${convs.length} conversations.</div>`;
+  } catch(e) {
+    alertEl.innerHTML = `<div class="alert alert-red">❌ ${e.message}</div>`;
+  }
+});
+
+// ── Export CSV ────────────────────────────────
+document.getElementById('expCSV').addEventListener('click', async () => {
+  const alertEl = document.getElementById('expAlert');
+  alertEl.innerHTML = '<div class="alert alert-green">Exporting…</div>';
+  try {
+    const convs = await get('conversations', 'select=*&order=started_at.asc');
+    let csv = 'student_id,group,message_count,started_at,ended_at,duration_minutes\n';
+    convs.forEach(c => {
+      const start = new Date(c.started_at);
+      const end   = c.ended_at ? new Date(c.ended_at) : null;
+      const dur   = end ? ((end-start)/60000).toFixed(1) : '';
+      csv += `${c.student_id},${c.study_group},${c.message_count||0},${c.started_at||''},${c.ended_at||''},${dur}\n`;
+    });
+    dl(`conversations_summary_${today()}.csv`, csv, 'text/csv');
+    alertEl.innerHTML = `<div class="alert alert-green">✅ CSV exported.</div>`;
+  } catch(e) {
+    alertEl.innerHTML = `<div class="alert alert-red">❌ ${e.message}</div>`;
+  }
+});
+
+document.getElementById('refreshBtn').addEventListener('click', refreshStats);
+
+// ── Search Student ────────────────────────────
+document.getElementById('searchBtn').addEventListener('click', async () => {
+  const sid = document.getElementById('searchId').value.trim().toUpperCase();
+  const res = document.getElementById('searchResult');
+  if (!sid) return;
+
+  res.style.display='block';
+  res.innerHTML='<p>Searching…</p>';
+
+  try {
+    const [students, convs] = await Promise.all([
+      get('students', `student_id=eq.${encodeURIComponent(sid)}&select=*`),
+      get('conversations', `student_id=eq.${encodeURIComponent(sid)}&select=*`)
+    ]);
+
+    if (!students.length) { res.innerHTML='<p>Student not found.</p>'; return; }
+
+    const s  = students[0];
+    const msgCount = convs.reduce((sum,c)=>sum+(c.message_count||0),0);
+
+    res.innerHTML = `
+      <p><strong>ID:</strong> ${s.student_id}</p>
+      <p><strong>Group:</strong> <span class="pill ${s.study_group}">${s.study_group}</span></p>
+      <p><strong>Started session:</strong> ${s.has_started?'Yes':'Not yet'}</p>
+      <p><strong>Conversations:</strong> ${convs.length}</p>
+      <p><strong>Total messages:</strong> ${msgCount}</p>
+      <p><strong>Last active:</strong> ${s.last_active?new Date(s.last_active).toLocaleString():'—'}</p>
+    `;
+  } catch(e) {
+    res.innerHTML=`<p style="color:red">Error: ${e.message}</p>`;
+  }
+});
+
+// ── Utilities ─────────────────────────────────
+function dl(filename, content, type) {
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=filename; a.click();
+}
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+</script>
+</body>
+</html>
