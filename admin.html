@@ -289,7 +289,7 @@
     <div class="form-row">
       <div class="field">
         <label>Study Prefix</label>
-        <input id="prefix" value="HCI2026" maxlength="10">
+        <input id="prefix" value="HCI2025" maxlength="10">
       </div>
       <div class="field">
         <label>Number of students</label>
@@ -339,7 +339,7 @@
     <div class="form-row">
       <div class="field" style="flex:1; max-width:300px;">
         <label>Student ID</label>
-        <input id="searchId" placeholder="HCI2026_001" style="width:100%">
+        <input id="searchId" placeholder="HCI2025_001" style="width:100%">
       </div>
       <button class="btn btn-outline" id="searchBtn">Search</button>
     </div>
@@ -353,7 +353,7 @@
 //  🔑  PASTE YOUR SUPABASE KEYS HERE
 // ─────────────────────────────────────────────
 const SUPABASE_URL  = 'https://xvaokacldkgofkoldpdu.supabase.co';  // ← replace
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2YW9rYWNsZGtnb2Zrb2xkcGR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTMyNTc2NCwiZXhwIjoyMDg2OTAxNzY0fQ.OqaGtCYUbSO_WqBWpGjjLT46BsakX9r-AhSFpPpnSLk';              // ← replace
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2YW9rYWNsZGtnb2Zrb2xkcGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjU3NjQsImV4cCI6MjA4NjkwMTc2NH0.dfGr0I7-nmRPq0t2ZV2a9xJ2yi5h6nhDffT-0nsM_-8';              // ← replace
 // ─────────────────────────────────────────────
 
 // ── Supabase REST helpers ─────────────────────
@@ -565,9 +565,5 @@ function today() {
   return new Date().toISOString().split('T')[0];
 }
 </script>
-  
-<!--<script type="module" src="app.js"></script>
-<script src="config.js"></script>-->
-
 </body>
 </html>
